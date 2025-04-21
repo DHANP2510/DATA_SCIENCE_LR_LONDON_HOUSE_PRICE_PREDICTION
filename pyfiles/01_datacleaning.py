@@ -43,7 +43,15 @@ class DataCleaning:
     def remove_outliers(self, columns=None):
         """
         Remove outliers from specified numerical columns using the IQR method.
-        columns: list of column names to apply outlier removal
+
+        The IQR (Interquartile Range) is calculated as Q3 - Q1.
+        Any data point outside the range:
+            [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR]
+        is considered an outlier and will be removed.
+
+        columns: list of column names to apply outlier removal.
+                 If None, all numerical columns will be used.
+
         """
         if columns is None:
             columns = self.data.select_dtypes(include=['number']).columns
