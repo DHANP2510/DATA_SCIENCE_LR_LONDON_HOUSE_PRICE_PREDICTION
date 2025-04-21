@@ -1,62 +1,82 @@
 import pandas as pd
-import numpy as np
-import pickle
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
 
 class DataCleaning:
-    def __init__(self, data_path):
-        self.data_path = data_path
-        self.df = None
-        self.cleaned_data = None
+    def __init__(self, data):
+        self.data = data.copy()
 
-    def load_data(self):
-        """Loads the data from the CSV file"""
-        self.df = pd.read_csv(self.data_path)
-        print(f"Data loaded from {self.data_path}")
+    def show_info(self):
+        """Display basic information about the dataset."""
+        print("Data Info:")
+        print(self.data.info())
+        print("\nMissing Values:")
+        print(self.data.isnull().sum())
+        print("\nDuplicate Rows:", self.data.duplicated().sum())
 
-    def handle_missing_values(self):
-        """Handles missing values using SimpleImputer"""
-        # Create imputer to fill missing values
-        imputer = SimpleImputer(strategy='mean')  # You can change strategy based on needs
-        self.df.iloc[:, :] = imputer.fit_transform(self.df)
-        print("Missing values handled")
+    def drop_duplicates(self):
+        """Remove duplicate rows."""
+        before = self.data.shape[0]
+        self.data = self.data.drop_duplicates()
+        after = self.data.shape[0]
+        print(f"Removed {before - after} duplicate rows.")
 
-    def handle_outliers(self):
-        """Handles outliers in the dataset"""
-        # For simplicity, we'll use IQR method for outlier detection and removal
-        Q1 = self.df.quantile(0.25)
-        Q3 = self.df.quantile(0.75)
-        IQR = Q3 - Q1
-        self.df = self.df[~((self.df < (Q1 - 1.5 * IQR)) | (self.df > (Q3 + 1.5 * IQR))).any(axis=1)]
-        print("Outliers handled using IQR method")
+    def fill_missing(self, strategy='mean', columns=None):
+        """
+        Fill missing values in specified columns using a strategy.
+        strategy: 'mean', 'median', 'mode', or a specific value
+        columns: list of column names to apply the strategy
+        """
+        if columns is None:
+            columns = self.data.columns
 
-    def standardize_data(self):
-        """Standardize numerical features"""
-        scaler = StandardScaler()
-        self.df[self.df.select_dtypes(include=[np.number]).columns] = scaler.fit_transform(self.df.select_dtypes(include=[np.number]))
-        print("Data standardized")
+        for col in columns:
+            if self.data[col].isnull().sum() > 0:
+                if strategy == 'mean':
+                    self.data[col] = self.data[col].fillna(self.data[col].mean())
+                elif strategy == 'median':
+                    self.data[col] = self.data[col].fillna(self.data[col].median())
+                elif strategy == 'mode':
+                    self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
+                else:
+                    self.data[col] = self.data[col].fillna(strategy)
+                print(f"Filled missing values in '{col}' using strategy: {strategy}")
 
-    def save_cleaned_data(self, output_path):
-        """Save the cleaned dataset to a pickle file"""
-        self.cleaned_data = self.df
-        with open(output_path, 'wb') as file:
-            pickle.dump(self.cleaned_data, file)
-        print(f"Cleaned data saved to {output_path}")
-        
-    def execute_cleaning(self):
-        """Execute all cleaning steps"""
-        self.load_data()
-        self.handle_missing_values()
-        self.handle_outliers()
-        self.standardize_data()
+    def remove_outliers(self, columns=None):
+        """
+        Remove outliers from specified numerical columns using the IQR method.
+        columns: list of column names to apply outlier removal
+        """
+        if columns is None:
+            columns = self.data.select_dtypes(include=['number']).columns
 
-# Example usage:
-#if __name__ == "__main__":
-    # Path to your raw dataset
-    #data_path = 'path/to/your/raw_data.csv'
-    #output_path = 'path/to/save/cleaned_data.pkl'
-    
-    #cleaner = DataCleaning(data_path)
-    #cleaner.execute_cleaning()
-    $cleaner.save_cleaned_data(output_path)
+        for col in columns:
+            Q1 = self.data[col].quantile(0.25)
+            Q3 = self.data[col].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+
+            before = self.data.shape[0]
+            self.data = self.data[(self.data[col] >= lower_bound) & (self.data[col] <= upper_bound)]
+            after = self.data.shape[0]
+            print(f"Removed {before - after} outliers from '{col}'.")
+
+    def convert_data_types(self, conversions):
+        """
+        Convert column data types.
+        conversions: dictionary where keys are column names and values are target data types
+        Example: {'price': 'float', 'date': 'datetime'}
+        """
+        for col, dtype in conversions.items():
+            try:
+                if dtype == 'datetime':
+                    self.data[col] = pd.to_datetime(self.data[col], errors='coerce')
+                else:
+                    self.data[col] = self.data[col].astype(dtype)
+                print(f"Converted '{col}' to {dtype}.")
+            except Exception as e:
+                print(f"Failed to convert '{col}' to {dtype}. Error: {e}")
+
+    def get_clean_data(self):
+        """Return the cleaned DataFrame."""
+        return self.data
+
