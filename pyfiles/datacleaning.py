@@ -147,3 +147,36 @@ class DataCleaner:
         
         # Step 7: Save the updated dataframe with encoded features.
         self.df = df
+
+#####################################################################################################################
+# How to use this file
+train_df = pd.read_csv("train.csv")
+# test_df = pd.read_csv("test.csv")
+
+
+# # TRAINING
+# train_cleaner = DataCleaner(train_df)
+# train_cleaner.extract_incode()
+# train_cleaner.impute_with_mode()
+# train_cleaner.generate_time_features(fit=True, future_steps=12)
+# train_cleaner.encode_features(target_col='price', fit=True)
+
+# train_data_final = train_cleaner.df
+# future_features = train_cleaner.future_time_features  # for forecasting test
+
+# # TESTING
+# test_cleaner = DataCleaner(test_df)
+# test_cleaner.dp = train_cleaner.dp  # share fitted DP
+# test_cleaner.mean_encoders = train_cleaner.mean_encoders
+# test_cleaner.global_means = train_cleaner.global_means
+# test_cleaner.bin_edges = train_cleaner.bin_edges
+# test_cleaner.label_encoders = train_cleaner.label_encoders
+# test_cleaner.energy_encoder = train_cleaner.energy_encoder
+
+# test_cleaner.extract_incode()
+# test_cleaner.impute_with_mode()
+# test_cleaner.generate_time_features(fit=False)  # use same DP
+# test_cleaner.encode_features(fit=False)
+
+# test_data_final = test_cleaner.df
+
