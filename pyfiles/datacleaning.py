@@ -150,7 +150,7 @@ class DataCleaner:
 
 #####################################################################################################################
 # How to use this file
-train_df = pd.read_csv("train.csv")
+# train_df = pd.read_csv("train.csv")
 # test_df = pd.read_csv("test.csv")
 
 
