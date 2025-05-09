@@ -110,7 +110,7 @@ class DataCleaner:
 
         if fit:
             # Step 1: Mean Encoding for categorical columns (e.g., 'postcode', 'outcode', etc.).
-            cat_features = ['postcode', 'outcode', 'tenure', 'propertyType']
+            cat_features = ['postcode', 'outcode', 'tenure', 'propertyType', 'incode']
             for col in cat_features:
                 # For each categorical feature, calculate the mean value of the target (e.g., 'price').
                 group_mean = df.groupby(col)[target_col].mean()
