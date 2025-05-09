@@ -91,7 +91,7 @@ class DataCleaner:
             time_features = poly.fit_transform(self.df[['year', 'month', 'day']])  # Apply to year, month, day
             
             # Generate names for the polynomial features (e.g., year^2, year*month)
-            feature_names = ['1', 'year', 'month', 'day', 'year^2', 'year*month', 'year*day', 'month^2', 'month*day', 'day^2']
+            feature_names = ['1', 'year^2', 'year*month', 'year*day', 'month^2', 'month*day', 'day^2']
             
             # Convert the resulting array back to a DataFrame with appropriate column names.
             time_features_df = pd.DataFrame(time_features, columns=feature_names, index=self.df.index)
