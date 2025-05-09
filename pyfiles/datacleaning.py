@@ -98,6 +98,9 @@ class DataCleaner:
             
             # Step 7: Merge the new time features with the original DataFrame.
             self.df = pd.concat([self.df, time_features_df], axis=1)
+            
+            # Drop original 'year', 'month', and 'day' columns to avoid duplication.
+            self.df.drop(['year', 'month', 'day'], axis=1, inplace=True)
         
         # Optional: Reset the index to have 'temp_date' as a normal column again.
         self.df.reset_index(inplace=True)
