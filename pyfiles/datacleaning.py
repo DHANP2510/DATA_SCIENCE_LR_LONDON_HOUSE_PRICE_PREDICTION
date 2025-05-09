@@ -91,16 +91,13 @@ class DataCleaner:
             time_features = poly.fit_transform(self.df[['year', 'month', 'day']])  # Apply to year, month, day
             
             # Generate names for the polynomial features (e.g., year^2, year*month)
-            feature_names = ['1', 'year^2', 'year*month', 'year*day', 'month^2', 'month*day', 'day^2']
+            feature_names = ['1', 'year', 'month', 'day', 'year^2', 'year*month', 'year*day', 'month^2', 'month*day', 'day^2']
             
             # Convert the resulting array back to a DataFrame with appropriate column names.
             time_features_df = pd.DataFrame(time_features, columns=feature_names, index=self.df.index)
             
             # Step 7: Merge the new time features with the original DataFrame.
             self.df = pd.concat([self.df, time_features_df], axis=1)
-            
-            # Drop original 'year', 'month', and 'day' columns to avoid duplication.
-            self.df.drop(['year', 'month', 'day'], axis=1, inplace=True)
         
         # Optional: Reset the index to have 'temp_date' as a normal column again.
         self.df.reset_index(inplace=True)
@@ -182,4 +179,3 @@ class DataCleaner:
 # test_cleaner.encode_features(fit=False)
 
 # test_data_final = test_cleaner.df
-
