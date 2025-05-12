@@ -67,10 +67,10 @@ class DataCleaner:
             
         if fit:
             tmp_test = dp_features.out_of_sample(steps = 7 + 1)
-            self.df = self.df.join(tmp_test, how = 'left')
+            self.df = self.df.merge(tmp_test, how='left', right_index=True, left_on='sale_date')
         else: 
             tmp_feature = dp_features.in_sample()
-            self.df = self.df.join(tmp_feature, how = 'left')
+            self.df = self.df.merge(tmp_feature, how='left', right_index=True, left_on='sale_date')
 
     
     def encode_features(self, target_col='price', fit=True):
