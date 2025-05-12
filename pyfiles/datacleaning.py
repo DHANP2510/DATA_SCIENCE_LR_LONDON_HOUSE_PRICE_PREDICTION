@@ -116,3 +116,48 @@ class DataCleaner:
         
         # Step 7: Save the updated dataframe with encoded features.
         self.df = df
+
+
+# Steps to use this class:
+# train_df = pd.read_csv("/kaggle/input/london-house-price-prediction-advanced-techniques/train.csv")
+# test_df = pd.read_csv("/kaggle/input/london-house-price-prediction-advanced-techniques/test.csv")
+# train_df['sale_date'] = pd.to_datetime({
+#     'year': df['sale_year'],
+#     'month': df['sale_month'],
+#     'day': 1
+# })
+
+# test_df['sale_date'] = pd.to_datetime({
+#     'year': df['sale_year'],
+#     'month': df['sale_month'],
+#     'day': 1
+# })
+
+# sale_dates = pd.to_datetime(train_df['sale_date'].sort_values().unique())
+# sale_index = pd.date_range(start=sale_dates.min(), end=sale_dates.max(), freq='MS')  # 'MS' = Month Start
+
+# # TRAINING
+# train_cleaner = DataCleaner(train_df)
+# train_cleaner.extract_incode()
+# train_cleaner.impute_with_mode()
+# train_cleaner.generate_time_features(index=sale_index, fit=False)
+# train_cleaner.encode_features(target_col='price', fit=True)
+
+# train_data_final = train_cleaner.df
+# future_features = train_cleaner.future_time_features  # for forecasting test
+
+# # TESTING
+# test_cleaner = DataCleaner(test_df)
+# test_cleaner.dp = train_cleaner.dp  # share fitted DP
+# test_cleaner.mean_encoders = train_cleaner.mean_encoders
+# test_cleaner.global_means = train_cleaner.global_means
+# test_cleaner.bin_edges = train_cleaner.bin_edges
+# test_cleaner.label_encoders = train_cleaner.label_encoders
+# test_cleaner.energy_encoder = train_cleaner.energy_encoder
+
+# test_cleaner.extract_incode()
+# test_cleaner.impute_with_mode()
+# test_cleaner.generate_time_features(index=sale_index, fit=True)  # use same DP
+# test_cleaner.encode_features(fit=False)
+
+# test_data_final = test_cleaner.df
